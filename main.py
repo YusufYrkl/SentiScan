@@ -24,7 +24,7 @@ conn.commit()
 
 # Load tweets dataset
 df = pd.read_csv('Tweets.csv', header=None, encoding='ISO-8859-1')
-tweets = df[5].head(100).tolist()  # Process only the first 50 tweets for this example
+tweets = df.iloc[500:700, 5].tolist()
 
 # Function to preprocess tweets
 def preprocess_tweet(tweet):
