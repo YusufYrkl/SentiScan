@@ -1,0 +1,24 @@
+<!-- tweet_display/templates/tweets/tweet_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tweet Analysis</title>
+</head>
+<body>
+    <h1>Tweet Analysis</h1>
+    <table border="1">
+        <tr>
+            <th>Tweet</th>
+            <th>Sentiment</th>
+            <th>Confidence</th>
+        </tr>
+        {% for tweet in tweets %}
+        <tr>
+            <td>{{ tweet.tweet }}</td>
+            <td>{{ tweet.sentiment }}</td>
+            <td>{{ tweet.confidence }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

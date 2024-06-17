@@ -1,0 +1,26 @@
+# Virtual environment
+venv/
+.env
+*.pyc
+__pycache__/
+db.sqlite3
+.DS_Store
+*.log
+*.pot
+*.mo
+*.pyc
+*.pyo
+*.swp
+*.swo
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+node_modules/
+coverage/
+*.cover
+*.egg
+*.egg-info
+dist/
+build/
+*.csv
