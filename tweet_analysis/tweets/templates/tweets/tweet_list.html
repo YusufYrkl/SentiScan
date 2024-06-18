@@ -20,5 +20,41 @@
         </tr>
         {% endfor %}
     </table>
+    <h2>Sentiment Distribution</h2>
+    <canvas id="sentimentChart"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('sentimentChart').getContext('2d');
+        var sentimentData = {{ sentiment_data|safe }};
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(sentimentData),
+                datasets: [{
+                    label: 'Sentiment Analysis',
+                    data: Object.values(sentimentData),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',  // color for 'Negative'
+                        'rgba(255, 206, 86, 0.2)',  // color for 'Neutral'
+                        'rgba(75, 192, 192, 0.2)'  // color for 'Positive'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
