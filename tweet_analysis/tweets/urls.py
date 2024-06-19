@@ -3,4 +3,5 @@ from . import views
 
 urlpatterns = [
     path('', views.tweet_list, name='tweet_list'),
+    path('graphs/', views.graphs, name='graphs'),
 ]
