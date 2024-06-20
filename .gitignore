@@ -1,27 +1,83 @@
 # Virtual environment
 venv/
 .env
+
+# Byte-compiled / optimized / DLL files
 *.pyc
 __pycache__/
+
+# SQLite database files
+*.db
+
+# Django specific files
 db.sqlite3
-.DS_Store
+
+# Logs
 *.log
+
+# Translations
 *.pot
 *.mo
-*.pyc
-*.pyo
-*.swp
-*.swo
-.idea/
+
+# Pytest
+*.cover
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# macOS
+.DS_Store
+
+# VS Code
 .vscode/
+
+# PyCharm
+.idea/
+
+# Sublime Text
 *.sublime-project
 *.sublime-workspace
+
+# Sphinx documentation
+docs/_build/
+
+# Node.js
 node_modules/
+
+# Coverage reports
 coverage/
 *.cover
+
+# MySQL
+*.sql
+
+# C extensions
+*.so
+
+# Packages
 *.egg
 *.egg-info
 dist/
 build/
+
+# CSV files
 *.csv
-*.db
+
+# Editor swap files
+*.swp
+*.swo
+
+# Server specific files
+.pki
+.cache
+.wget-hsts
+.pip
