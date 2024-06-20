@@ -47,23 +47,12 @@
             float: right;
             margin-top: 10px;
         }
-        #showcase {
-            min-height: 400px;
-            background: url('https://source.unsplash.com/1600x900/?nature,water') no-repeat 0 -400px;
-            text-align: center;
-            color: #ffffff;
-        }
-        #showcase h1 {
-            margin-top: 100px;
-            font-size: 55px;
-            margin-bottom: 10px;
-        }
         form {
             background: #ffffff;
             padding: 20px;
             margin-top: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 100%;  /* Ensure the form doesn't exceed its container */
+            max-width: 100%;
         }
         form label {
             display: block;
@@ -72,7 +61,7 @@
         form input[type="text"],
         form input[type="number"],
         form select {
-            width: calc(100% - 22px);  /* Adjust to fit within the container */
+            width: calc(100% - 22px);
             padding: 10px;
             margin-bottom: 10px;
             box-sizing: border-box;
@@ -108,7 +97,95 @@
         table tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            text-align: center;
+            padding-top: 20%;
+            font-size: 24px;
+            color: #333;
+        }
+        .comment-button {
+            cursor: pointer;
+            color: blue;
+            font-weight: bold;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .Not_Working {
+            color: red;
+        }
+
     </style>
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function showModal(tweetId) {
+            document.getElementById('modal').style.display = 'block';
+            document.getElementById('tweetId').value = tweetId;
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function saveComment() {
+            const tweetId = document.getElementById('tweetId').value;
+            const comment = document.getElementById('comment').value;
+            localStorage.setItem(tweetId, comment);
+            closeModal();
+            displayComments();
+        }
+
+        function displayComments() {
+            const tweets = document.querySelectorAll('.tweet');
+            tweets.forEach(tweet => {
+                const tweetId = tweet.getAttribute('data-id');
+                const comment = localStorage.getItem(tweetId);
+                if (comment) {
+                    tweet.querySelector('.comment').innerText = comment;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', displayComments);
+    </script>
 </head>
 <body>
     <header>
@@ -126,7 +203,22 @@
         </div>
     </header>
 
+    <div id="loading" class="loading">Processing...</div>
+
     <div class="container">
+        <h2>Total Tweets Processed: {{ total_tweets }}</h2>
+        <form method="post" action="" onsubmit="showLoading()">
+            {% csrf_token %}
+            <label class="Not_Working">Currently Not Working!</label>
+            <label for="start">Start Line:</label>
+            <input type="number" name="start" id="start" min="0" required>
+
+            <label for="end">End Line:</label>
+            <input type="number" name="end" id="end" min="1" required>
+
+            <button type="submit">Add Tweets</button>
+        </form>
+
         <form method="get" action="">
             <label for="sentiment">Sentiment:</label>
             <select name="sentiment" id="sentiment">
@@ -150,15 +242,29 @@
                 <th>Tweet</th>
                 <th>Sentiment</th>
                 <th>Confidence</th>
+                <th>Comment</th>
+                <th>Add Comment</th>
             </tr>
             {% for tweet in tweets %}
-            <tr>
+            <tr class="tweet" data-id="{{ tweet.id }}">
                 <td>{{ tweet.tweet }}</td>
                 <td>{{ tweet.sentiment }}</td>
                 <td>{{ tweet.confidence }}</td>
+                <td class="comment"></td>
+                <td><span class="comment-button" onclick="showModal('{{ tweet.id }}')">+</span></td>
             </tr>
             {% endfor %}
         </table>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Enter Comment:</h2>
+            <input type="hidden" id="tweetId">
+            <textarea id="comment" rows="4" cols="50"></textarea>
+            <button onclick="saveComment()">Save Comment</button>
+        </div>
     </div>
 </body>
 </html>

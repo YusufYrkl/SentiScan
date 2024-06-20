@@ -1,12 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import TweetAnalysis
 from django.db.models import Count
+import subprocess
+import os
+
 
 def get_sentiment_data():
     tweets = TweetAnalysis.objects.all()
     sentiment_counts = tweets.values('sentiment').annotate(total=Count('sentiment')).order_by('sentiment')
     sentiment_data = {item['sentiment']: item['total'] for item in sentiment_counts}
     return sentiment_data
+
 
 def tweet_list(request):
     sentiment = request.GET.get('sentiment')
@@ -29,8 +33,24 @@ def tweet_list(request):
         tweets = tweets.filter(tweet__icontains=keyword)
 
     sentiment_data = get_sentiment_data()
+    total_tweets = TweetAnalysis.objects.count()
 
-    return render(request, 'tweets/tweet_list.html', {'tweets': tweets, 'sentiment_data': sentiment_data})
+    if request.method == 'POST':
+        start = int(request.POST.get('start', 0))
+        end = int(request.POST.get('end', 50))
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        script_path = os.path.join(project_root, 'main.py')
+        try:
+            result = subprocess.run(['python', script_path, str(start), str(end)], capture_output=True, text=True)
+            print(result.stdout)
+            print(result.stderr)
+        except Exception as e:
+            print(e)
+        return redirect('tweet_list')
+
+    return render(request, 'tweets/tweet_list.html',
+                  {'tweets': tweets, 'sentiment_data': sentiment_data, 'total_tweets': total_tweets})
+
 
 def graphs(request):
     sentiment_data = get_sentiment_data()

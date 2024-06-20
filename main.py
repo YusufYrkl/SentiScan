@@ -1,7 +1,7 @@
-import pandas as pd
 import sqlite3
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import pandas as pd
 from scipy.special import softmax
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
 # Set display options for better console readability
 pd.set_option('display.max_colwidth', 50)
@@ -22,9 +22,14 @@ CREATE TABLE IF NOT EXISTS tweet_analysis (
 ''')
 conn.commit()
 
+# Get start and end parameters from command-line arguments
+# start = int(sys.argv[1])
+# end = int(sys.argv[2])
+
 # Load tweets dataset
 df = pd.read_csv('Tweets.csv', header=None, encoding='ISO-8859-1')
-tweets = df.iloc[100:150, 5].tolist()
+# tweets = df.iloc[start:end, 5].tolist()
+tweets = df.iloc[0:50, 5].tolist()
 
 
 # Function to preprocess tweets
