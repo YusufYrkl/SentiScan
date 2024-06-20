@@ -1,16 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import TweetAnalysis
 from django.db.models import Count
 import subprocess
 import os
-
 
 def get_sentiment_data():
     tweets = TweetAnalysis.objects.all()
     sentiment_counts = tweets.values('sentiment').annotate(total=Count('sentiment')).order_by('sentiment')
     sentiment_data = {item['sentiment']: item['total'] for item in sentiment_counts}
     return sentiment_data
-
 
 def tweet_list(request):
     sentiment = request.GET.get('sentiment')
@@ -35,7 +33,7 @@ def tweet_list(request):
     sentiment_data = get_sentiment_data()
     total_tweets = TweetAnalysis.objects.count()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and 'start' in request.POST and 'end' in request.POST:
         start = int(request.POST.get('start', 0))
         end = int(request.POST.get('end', 50))
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -48,9 +46,7 @@ def tweet_list(request):
             print(e)
         return redirect('tweet_list')
 
-    return render(request, 'tweets/tweet_list.html',
-                  {'tweets': tweets, 'sentiment_data': sentiment_data, 'total_tweets': total_tweets})
-
+    return render(request, 'tweets/tweet_list.html', {'tweets': tweets, 'sentiment_data': sentiment_data, 'total_tweets': total_tweets})
 
 def graphs(request):
     sentiment_data = get_sentiment_data()

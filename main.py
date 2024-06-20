@@ -29,7 +29,7 @@ conn.commit()
 # Load tweets dataset
 df = pd.read_csv('Tweets.csv', header=None, encoding='ISO-8859-1')
 # tweets = df.iloc[start:end, 5].tolist()
-tweets = df.iloc[0:50, 5].tolist()
+tweets = df.iloc[0:300, 5].tolist()
 
 
 # Function to preprocess tweets

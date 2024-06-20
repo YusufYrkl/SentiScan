@@ -116,6 +116,12 @@
             color: blue;
             font-weight: bold;
         }
+        .delete-button {
+            cursor: pointer;
+            color: red;
+            font-weight: bold;
+            margin-left: 10px;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -149,7 +155,6 @@
         .Not_Working {
             color: red;
         }
-
     </style>
     <script>
         function showLoading() {
@@ -173,6 +178,11 @@
             displayComments();
         }
 
+        function deleteComment(tweetId) {
+            localStorage.removeItem(tweetId);
+            displayComments();
+        }
+
         function displayComments() {
             const tweets = document.querySelectorAll('.tweet');
             tweets.forEach(tweet => {
@@ -180,6 +190,8 @@
                 const comment = localStorage.getItem(tweetId);
                 if (comment) {
                     tweet.querySelector('.comment').innerText = comment;
+                } else {
+                    tweet.querySelector('.comment').innerText = '';
                 }
             });
         }
@@ -243,7 +255,7 @@
                 <th>Sentiment</th>
                 <th>Confidence</th>
                 <th>Comment</th>
-                <th>Add Comment</th>
+                <th>Action</th>
             </tr>
             {% for tweet in tweets %}
             <tr class="tweet" data-id="{{ tweet.id }}">
@@ -251,7 +263,10 @@
                 <td>{{ tweet.sentiment }}</td>
                 <td>{{ tweet.confidence }}</td>
                 <td class="comment"></td>
-                <td><span class="comment-button" onclick="showModal('{{ tweet.id }}')">+</span></td>
+                <td>
+                    <span class="comment-button" onclick="showModal('{{ tweet.id }}')">+</span>
+                    <span class="delete-button" onclick="deleteComment('{{ tweet.id }}')">-</span>
+                </td>
             </tr>
             {% endfor %}
         </table>
