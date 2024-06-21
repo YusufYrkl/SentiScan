@@ -152,9 +152,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-        .Not_Working {
-            color: red;
-        }
     </style>
     <script>
         function showLoading() {
@@ -235,18 +232,26 @@
             <label for="sentiment">Sentiment:</label>
             <select name="sentiment" id="sentiment">
                 <option value="">All</option>
-                <option value="Positive">Positive</option>
-                <option value="Neutral">Neutral</option>
-                <option value="Negative">Negative</option>
+                <option value="Positive" {% if request.GET.sentiment == 'Positive' %}selected{% endif %}>Positive</option>
+                <option value="Neutral" {% if request.GET.sentiment == 'Neutral' %}selected{% endif %}>Neutral</option>
+                <option value="Negative" {% if request.GET.sentiment == 'Negative' %}selected{% endif %}>Negative</option>
             </select>
 
             <label for="min_confidence">Minimum Confidence:</label>
-            <input type="number" step="0.01" name="min_confidence" id="min_confidence" min="0" max="100">
+            <input type="number" step="0.01" name="min_confidence" id="min_confidence" min="0" max="100" value="{{ request.GET.min_confidence }}">
 
             <label for="keyword">Keyword:</label>
-            <input type="text" name="keyword" id="keyword">
+            <input type="text" name="keyword" id="keyword" value="{{ request.GET.keyword }}">
 
             <button type="submit">Filter</button>
+        </form>
+
+        <form method="get" action="{% url 'export_tweets' %}">
+            {% csrf_token %}
+            <input type="hidden" name="sentiment" value="{{ request.GET.sentiment }}">
+            <input type="hidden" name="min_confidence" value="{{ request.GET.min_confidence }}">
+            <input type="hidden" name="keyword" value="{{ request.GET.keyword }}">
+            <button type="submit">Export to CSV</button>
         </form>
 
         <table>
