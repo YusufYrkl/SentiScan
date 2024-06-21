@@ -1,5 +1,6 @@
 import csv
 from django.http import HttpResponse
+from django.utils.timezone import now
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import TweetAnalysis
 from django.db.models import Count
@@ -74,8 +75,12 @@ def export_tweets(request):
     if keyword:
         tweets = tweets.filter(tweet__icontains=keyword)
 
+    # Erstelle den Zeitstempel für den Dateinamen
+    timestamp = now().strftime('%Y-%m-%d_%H-%M-%S')
+    filename = f"tweets_{timestamp}.csv"
+
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="tweets.csv"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
 
     writer = csv.writer(response)
     writer.writerow(['id', 'tweet', 'sentiment', 'confidence'])
