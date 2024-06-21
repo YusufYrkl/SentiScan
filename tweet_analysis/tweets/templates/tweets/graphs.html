@@ -1,198 +1,92 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Tweet Analysis</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
-        .chart-container {
-            width: 45%;
-            float: left;
-            padding: 15px;
-        }
-        header {
-            background: #35424a;
-            color: #ffffff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #e8491d 3px solid;
-        }
-        header a {
-            color: #ffffff;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 16px;
-        }
-        header ul {
-            padding: 0;
-            list-style: none;
-        }
-        header li {
-            float: left;
-            display: inline;
-            padding: 0 20px 0 20px;
-        }
-        header #branding {
-            float: left;
-        }
-        header #branding h1 {
-            margin: 0;
-        }
-        header nav {
-            float: right;
-            margin-top: 10px;
-        }
-        #showcase {
-            min-height: 400px;
-            background: url('https://source.unsplash.com/1600x900/?nature,water') no-repeat 0 -400px;
-            text-align: center;
-            color: #ffffff;
-        }
-        #showcase h1 {
-            margin-top: 100px;
-            font-size: 55px;
-            margin-bottom: 10px;
-        }
-        form {
-            background: #ffffff;
-            padding: 20px;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            max-width: 100%;  /* Ensure the form doesn't exceed its container */
-        }
-        form label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        form input[type="text"],
-        form input[type="number"],
-        form select {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-        form button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background: #35424a;
-            color: #ffffff;
-            border: none;
-            cursor: pointer;
-        }
-        form button:hover {
-            background: #e8491d;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        table, th, td {
-            border: 1px solid #dddddd;
-        }
-        table th, table td {
-            padding: 8px;
-            text-align: left;
-        }
-        table th {
-            background-color: #35424a;
-            color: white;
-        }
-        table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-    </style>
-</head>
-<body>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/styles.css' %}"
+    />
+  </head>
+  <body>
     <header>
-        <div class="container">
-            <div id="branding">
-                <h1>SentiScan</h1>
-                <h3>Tweet Analysis</h3>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="{% url 'graphs' %}">Graphs</a></li>
-                </ul>
-            </nav>
+      <div class="container">
+        <div id="branding">
+          <h1>SentiScan</h1>
+          <h3>Tweet Analysis</h3>
         </div>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="{% url 'graphs' %}">Graphs</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <div class="container">
-        <h2>Sentiment Distribution</h2>
+      <h2>Sentiment Distribution</h2>
 
-        <div class="chart-container">
-            <canvas id="sentimentBarChart"></canvas>
-        </div>
-        <div class="chart-container">
-            <canvas id="sentimentPieChart"></canvas>
-        </div>
+      <div class="chart-container">
+        <canvas id="sentimentBarChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="sentimentPieChart"></canvas>
+      </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            var sentimentData = {{ sentiment_data|safe }};
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        var sentimentData = {{ sentiment_data|safe }};
 
-            // Bar chart
-            var ctxBar = document.getElementById('sentimentBarChart').getContext('2d');
-            var barChart = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(sentimentData),
-                    datasets: [{
-                        label: 'Sentiment Analysis',
-                        data: Object.values(sentimentData),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(30,187,16,0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgb(34,222,19)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
+        // Bar chart
+        var ctxBar = document.getElementById('sentimentBarChart').getContext('2d');
+        var barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(sentimentData),
+                datasets: [{
+                    label: 'Sentiment Analysis',
+                    data: Object.values(sentimentData),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(30,187,16,0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgb(34,222,19)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
                     }
                 }
-            });
+            }
+        });
 
-            // Pie chart
-            var ctxPie = document.getElementById('sentimentPieChart').getContext('2d');
-            var pieChart = new Chart(ctxPie, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(sentimentData),
-                    datasets: [{
-                        data: Object.values(sentimentData),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(87,192,75,0.5)'
-                        ]
-                    }]
-                }
-            });
-        </script>
+        // Pie chart
+        var ctxPie = document.getElementById('sentimentPieChart').getContext('2d');
+        var pieChart = new Chart(ctxPie, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(sentimentData),
+                datasets: [{
+                    data: Object.values(sentimentData),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(87,192,75,0.5)'
+                    ]
+                }]
+            }
+        });
+      </script>
     </div>
-</body>
+  </body>
 </html>
