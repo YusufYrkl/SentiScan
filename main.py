@@ -1,3 +1,5 @@
+import sys
+import os
 import sqlite3
 import pandas as pd
 from scipy.special import softmax
@@ -7,8 +9,14 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 pd.set_option('display.max_colwidth', 50)
 pd.set_option('display.max_rows', 20)
 
+# Get the current script directory
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.join(script_dir, '')
+
 # Connect to the SQLite database
-conn = sqlite3.connect('tweets_analysis.db')
+db_path = os.path.join(project_root, 'tweets_analysis.db')
+print(f"Connecting to database at {db_path}")
+conn = sqlite3.connect(db_path)
 c = conn.cursor()
 
 # Create a table with a unique constraint on the 'tweet' column
@@ -23,14 +31,14 @@ CREATE TABLE IF NOT EXISTS tweet_analysis (
 conn.commit()
 
 # Get start and end parameters from command-line arguments
-# start = int(sys.argv[1])
-# end = int(sys.argv[2])
+start = int(sys.argv[1])
+end = int(sys.argv[2])
 
 # Load tweets dataset
-df = pd.read_csv('Tweets.csv', header=None, encoding='ISO-8859-1')
-# tweets = df.iloc[start:end, 5].tolist()
-tweets = df.iloc[0:300, 5].tolist()
-
+csv_path = os.path.join(script_dir, 'Tweets.csv')
+df = pd.read_csv(csv_path, header=None, encoding='ISO-8859-1')
+tweets = df.iloc[start:end, 5].tolist()
+print(f"Loaded {len(tweets)} tweets from {csv_path}")
 
 # Function to preprocess tweets
 def preprocess_tweet(tweet):
@@ -42,7 +50,6 @@ def preprocess_tweet(tweet):
             word = "http"
         tweet_words.append(word)
     return " ".join(tweet_words)
-
 
 # Load the pre-trained model and tokenizer from Hugging Face's Transformers
 roberta = "cardiffnlp/twitter-roberta-base-sentiment"
@@ -68,6 +75,7 @@ for tweet in tweets:
         c.execute('INSERT INTO tweet_analysis (tweet, sentiment, confidence) VALUES (?, ?, ?)',
                   (tweet, sentiment, confidence))
         conn.commit()
+        print(f"Inserted tweet into database: {tweet} with sentiment {sentiment} and confidence {confidence}")
     except sqlite3.IntegrityError:
         print("Duplicate tweet was not added.")
 

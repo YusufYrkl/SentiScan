@@ -6,14 +6,15 @@ from .models import TweetAnalysis
 from django.db.models import Count
 import subprocess
 import os
+from django.conf import settings
 
 def get_sentiment_data():
     # Retrieve all TweetAnalysis objects
     tweets = TweetAnalysis.objects.all()
-    
+
     # Aggregate sentiment counts, ordering by sentiment type
     sentiment_counts = tweets.values('sentiment').annotate(total=Count('sentiment')).order_by('sentiment')
-    
+
     # Convert the aggregation result into a dictionary with sentiment as keys and counts as values
     sentiment_data = {item['sentiment']: item['total'] for item in sentiment_counts}
     return sentiment_data
@@ -51,19 +52,19 @@ def tweet_list(request):
     if request.method == 'POST' and 'start' in request.POST and 'end' in request.POST:
         start = int(request.POST.get('start', 0))
         end = int(request.POST.get('end', 50))
-        
+
         # Get the project root directory and the path to the main.py script
-        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        script_path = os.path.join(project_root, 'main.py')
-        
+        script_path = os.path.join(settings.BASE_DIR, '../main.py')
+        python_interpreter = os.path.join(settings.BASE_DIR, '../.venv/Scripts/python.exe')
+
         # Run the main.py script with start and end parameters
         try:
-            result = subprocess.run(['python', script_path, str(start), str(end)], capture_output=True, text=True)
+            result = subprocess.run([python_interpreter, script_path, str(start), str(end)], capture_output=True, text=True)
             print(result.stdout)
             print(result.stderr)
         except Exception as e:
             print(e)
-        
+
         # Redirect to the tweet_list view
         return redirect('tweet_list')
 
@@ -117,6 +118,6 @@ def export_tweets(request):
 def graphs(request):
     # Get sentiment data
     sentiment_data = get_sentiment_data()
-    
+
     # Render the graphs template with sentiment data
     return render(request, 'tweets/graphs.html', {'sentiment_data': sentiment_data})
